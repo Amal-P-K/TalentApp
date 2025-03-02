@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#009688"
+        android:orientation="vertical">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+
+            <EditText
+                android:id="@+id/fn"
+                android:layout_width="910px"
+                android:layout_height="65dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="4dp"
+
+                android:background="@drawable/bg_txt_username"
+                android:hint="Firstname"
+                android:paddingLeft="60dp"
+                android:textColor="@color/colorText"
+                android:textSize="40px" />
+
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <EditText
+                android:id="@+id/ln"
+                android:layout_width="910px"
+                android:layout_height="65dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_txt_username"
+                android:hint="Lastname"
+                android:paddingLeft="60dp"
+                android:textColor="@color/colorText"
+                android:textSize="40px" />
+        </TableRow>
+
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/radioButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Male" />
+
+                <RadioButton
+                    android:id="@+id/radioButton2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Female" />
+            </RadioGroup>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <EditText
+                android:id="@+id/editTextPhone"
+                android:layout_width="910px"
+                android:layout_height="65dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="4dp"
+
+                android:background="@drawable/bg_txt_username"
+                android:hint="phone"
+                android:paddingLeft="60dp"
+                android:textColor="@color/colorText"
+                android:textSize="40px" />
+        </TableRow>
+
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <EditText
+                android:id="@+id/photo"
+                android:layout_width="910px"
+                android:layout_height="65dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="4dp"
+
+                android:background="@drawable/bg_txt_username"
+                android:hint="Photo"
+                android:paddingLeft="60dp"
+                android:textColor="@color/colorText"
+                android:textSize="40px" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <EditText
+                android:id="@+id/email"
+                android:layout_width="910px"
+                android:layout_height="65dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_txt_username"
+                android:hint="Email"
+                android:paddingLeft="60dp"
+                android:textColor="@color/colorText"
+                android:textSize="40px" />
+        </TableRow>
+
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <EditText
+                android:id="@+id/place"
+                android:layout_width="910px"
+                android:layout_height="65dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_txt_username"
+                android:hint="Address"
+                android:paddingLeft="60dp"
+                android:textColor="@color/colorText"
+                android:textSize="40px" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <EditText
+                android:id="@+id/post"
+                android:layout_width="910px"
+                android:layout_height="65dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_txt_username"
+                android:paddingLeft="60dp"
+                android:textColor="@color/colorText"
+                android:textSize="40px"
+                android:hint="Aadhar number"
+                 />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <EditText
+                android:id="@+id/pin"
+                android:layout_width="910px"
+                android:layout_height="65dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_txt_username"
+                android:paddingLeft="60dp"
+                android:textColor="@color/colorText"
+                android:textSize="40px"
+                android:hint="Age"
+              />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <EditText
+                android:id="@+id/un"
+                android:layout_width="910px"
+                android:layout_height="65dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="4dp"
+
+                android:background="@drawable/bg_txt_username"
+                android:hint="Username"
+                android:paddingLeft="60dp"
+                android:textColor="@color/colorText"
+                android:textSize="40px" />
+        </TableRow>
+
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <EditText
+                android:id="@+id/pwd"
+                android:layout_width="910px"
+                android:layout_height="65dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="4dp"
+
+                android:background="@drawable/bg_txt_password"
+                android:hint="Password"
+                android:paddingLeft="60dp"
+                android:textColor="@color/colorText"
+                android:textSize="40px" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <EditText
+                android:id="@+id/rpwd"
+                android:layout_width="910px"
+                android:layout_height="65dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_txt_password"
+                android:hint="Re-Password"
+                android:paddingLeft="60dp"
+                android:textColor="@color/colorText"
+                android:textSize="40px" />
+        </TableRow>
+
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/button"
+                android:layout_width="186dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/reg_btnn"
+                android:text="login" />
+        </TableRow>
+    </LinearLayout>
+
+</ScrollView>

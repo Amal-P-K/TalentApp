@@ -109,7 +109,7 @@ public class custom_req extends BaseAdapter {
 //        java.net.URL thumb_u;
 //        try {
 //
-//            //thumb_u = new java.net.URL("http://192.168.43.57:5000/static/photo/flyer.jpg");
+//            //thumb_u = new java.net.URL("http://192.168.43.57:8000/static/photo/flyer.jpg");
 //
 //            thumb_u = new java.net.URL("http://"+sh.getString("ip","")+":5000/static/photos/"+b.get(position));
 //            Drawable thumb_d = Drawable.createFromStream(thumb_u.openStream(), "src");

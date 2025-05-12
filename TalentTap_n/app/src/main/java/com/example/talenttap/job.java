@@ -1,4 +1,5 @@
 package com.example.talenttap;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -29,252 +30,150 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 public class job extends AppCompatActivity implements AdapterView.OnItemClickListener {
-    ArrayList<String> jb,jp,details,place,wage,date,jid,pid;
+    ArrayList<String> jb, jp, details, place, wage, date, jid, pid;
     ListView lv;
     SharedPreferences sh;
     Button b1;
     EditText e1;
     String jobb;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_job);
-        lv=findViewById(R.id.lv);
-        b1=findViewById(R.id.button2);
-        e1=findViewById(R.id.fn);
-        sh= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        lv = findViewById(R.id.lv);
+        b1 = findViewById(R.id.button2);
+        e1 = findViewById(R.id.fn);
+        sh = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        fetchAllJobs();
+
         b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                jobb=e1.getText().toString();
-                String  url ="http://"+sh.getString("ip", "") + ":5000/view_job2";
-                RequestQueue queue = Volley.newRequestQueue(job.this);
-
-                StringRequest stringRequest = new StringRequest(Request.Method.POST, url,new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Display the response string.
-                        Log.d("+++++++++++++++++",response);
-                        try {
-
-                            JSONArray ar=new JSONArray(response);
-                            jb= new ArrayList<>();
-                            jp= new ArrayList<>();
-                            date= new ArrayList<>();
-                            details=new ArrayList<>();
-                            wage=new ArrayList<>();
-                            place=new ArrayList<>();
-                            jid=new ArrayList<>();
-                            pid=new ArrayList<>();
-
-                            for(int i=0;i<ar.length();i++)
-                            {
-                                JSONObject jo=ar.getJSONObject(i);
-                                jb.add(jo.getString("jb"));
-                                jp.add(jo.getString("jp"));
-                                date.add(jo.getString("date"));
-                                details.add(jo.getString("det"));
-                                wage.add(jo.getString("wage"));
-                                place.add(jo.getString("place"));
-                                jid.add(jo.getString("jid"));
-                                pid.add(jo.getString("pid"));
-
-
-                            }
-
-                            // ArrayAdapter<String> ad=new ArrayAdapter<>(Home.this,android.R.layout.simple_list_item_1,name);
-                            //lv.setAdapter(ad);
-
-                            lv.setAdapter(new custom_job(job.this,jb,details,place,wage,date,jp));
-                            lv.setOnItemClickListener(job.this);
-
-                        } catch (Exception e) {
-                            Toast.makeText(getApplicationContext(),e+"",Toast.LENGTH_LONG).show();
-                            Log.d("=========", e.toString());
-                        }
-
-
-                    }
-
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                        Toast.makeText(job.this, "err"+error, Toast.LENGTH_SHORT).show();
-                    }
-                }) {
-                    @Override
-                    protected Map<String, String> getParams() {
-                        Map<String, String> params = new HashMap<>();
-                        params.put("job",jobb);
-                        return params;
-                    }
-                };
-                queue.add(stringRequest);
-
+                jobb = e1.getText().toString();
+                if (jobb.isEmpty()) {
+                    Toast.makeText(job.this, "Please enter a job name", Toast.LENGTH_SHORT).show();
+                } else {
+                    fetchFilteredJobs(jobb);
+                }
             }
         });
+    }
 
+    private void fetchAllJobs() {
+        sendJobRequest("/view_job", new HashMap<>());
+    }
 
-      String  url ="http://"+sh.getString("ip", "") + ":5000/view_job";
+    private void fetchFilteredJobs(String jobName) {
+        Map<String, String> params = new HashMap<>();
+        params.put("job", jobName);
+        sendJobRequest("/view_job2", params);
+    }
+
+    private void sendJobRequest(String endpoint, Map<String, String> params) {
+        String url = "http://" + sh.getString("ip", "") + ":8000" + endpoint;
         RequestQueue queue = Volley.newRequestQueue(job.this);
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                // Display the response string.
-                Log.d("+++++++++++++++++",response);
-                try {
-
-                    JSONArray ar=new JSONArray(response);
-                    jb= new ArrayList<>();
-                    jp= new ArrayList<>();
-                    date= new ArrayList<>();
-                    details=new ArrayList<>();
-                    wage=new ArrayList<>();
-                    place=new ArrayList<>();
-                    jid=new ArrayList<>();
-                    pid=new ArrayList<>();
-
-                    for(int i=0;i<ar.length();i++)
-                    {
-                        JSONObject jo=ar.getJSONObject(i);
-                        jb.add(jo.getString("jb"));
-                        jp.add(jo.getString("jp"));
-                        date.add(jo.getString("date"));
-                        details.add(jo.getString("det"));
-                        wage.add(jo.getString("wage"));
-                        place.add(jo.getString("place"));
-                        jid.add(jo.getString("jid"));
-                        pid.add(jo.getString("pid"));
-
-
-                    }
-
-                    // ArrayAdapter<String> ad=new ArrayAdapter<>(Home.this,android.R.layout.simple_list_item_1,name);
-                    //lv.setAdapter(ad);
-
-                    lv.setAdapter(new custom_job(job.this,jb,details,place,wage,date,jp));
-                    lv.setOnItemClickListener(job.this);
-
-                } catch (Exception e) {
-                    Toast.makeText(getApplicationContext(),e+"",Toast.LENGTH_LONG).show();
-                    Log.d("=========", e.toString());
-                }
-
-
-            }
-
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-                Toast.makeText(job.this, "err"+error, Toast.LENGTH_SHORT).show();
-            }
-        }) {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                response -> handleJobResponse(response),
+                error -> handleError(error)) {
             @Override
             protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-//                params.put("lid",sh.getString("lid",""));
-
                 return params;
             }
         };
         queue.add(stringRequest);
+    }
 
+    private void handleJobResponse(String response) {
+        try {
+            JSONArray ar = new JSONArray(response);
+            jb = new ArrayList<>();
+            jp = new ArrayList<>();
+            date = new ArrayList<>();
+            details = new ArrayList<>();
+            wage = new ArrayList<>();
+            place = new ArrayList<>();
+            jid = new ArrayList<>();
+            pid = new ArrayList<>();
+            ArrayList<String> company = new ArrayList<>();
 
+            for (int i = 0; i < ar.length(); i++) {
+                JSONObject jo = ar.getJSONObject(i);
+                jb.add(jo.getString("jb"));
+                jp.add(jo.getString("jp"));
+                date.add(jo.getString("date"));
+                details.add(jo.getString("det"));
+                wage.add(jo.getString("wage"));
+                place.add(jo.getString("place"));
+                jid.add(jo.getString("jid"));
+                pid.add(jo.getString("pid"));
+            }
+
+            lv.setAdapter(new custom_job(job.this, jb, details, place, wage, date, jp));
+            lv.setOnItemClickListener(job.this);
+        } catch (JSONException e) {
+            Log.e("Job Response", "JSON parsing error: " + e.getMessage());
+            Toast.makeText(getApplicationContext(), "Error parsing data", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void handleError(VolleyError error) {
+        Log.e("Volley Error", error.toString());
+        Toast.makeText(job.this, "Network Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-        AlertDialog.Builder ald=new AlertDialog.Builder(job.this);
+        AlertDialog.Builder ald = new AlertDialog.Builder(job.this);
         ald.setTitle(jb.get(position))
-                .setPositiveButton(" Send Complaint ", new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        try
-                        {
-
-                            Intent ik=new Intent(getApplicationContext(),sendcomp.class);
-                            ik.putExtra("pid",pid.get(position));
-                            startActivity(ik);
-
-
-                        }
-                        catch(Exception e)
-                        {
-                            Toast.makeText(getApplicationContext(),e+"",Toast.LENGTH_LONG).show();
-                        }
-
-                    }
+                .setPositiveButton("Send Complaint", (arg0, arg1) -> {
+                    Intent ik = new Intent(getApplicationContext(), sendcomp.class);
+                    ik.putExtra("pid", pid.get(position));
+                    startActivity(ik);
                 })
-                .setNegativeButton(" Send request ", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Send Request", (arg0, arg1) -> sendJobRequest(position))
+                .create()
+                .show();
+    }
 
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
+    private void sendJobRequest(int position) {
+        String url = "http://" + sh.getString("ip", "") + ":8000/snd_request";
+        RequestQueue queue = Volley.newRequestQueue(job.this);
 
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                response -> handleSendRequestResponse(response),
+                error -> handleError(error)) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("lid", sh.getString("lid", ""));
+                params.put("jid", jid.get(position));
+                return params;
+            }
+        };
+        queue.add(stringRequest);
+    }
 
-                        RequestQueue queue = Volley.newRequestQueue(job.this);
-                     String   url = "http://" + sh.getString("ip", "") + ":5000/snd_request";
+    private void handleSendRequestResponse(String response) {
+        Log.d("Server Response", response);
+        try {
+            JSONObject json = new JSONObject(response);
+            String task = json.optString("task", "unknown");
 
-                        // Request a string response from the provided URL.
-                        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-                                // Display the response string.
-                                Log.d("+++++++++++++++++", response);
-                                try {
-                                    JSONObject json = new JSONObject(response);
-                                    String res = json.getString("task");
-
-                                    if (res.equalsIgnoreCase("valid")) {
-                                        Toast.makeText(job.this, "Success", Toast.LENGTH_SHORT).show();
-
-                                        Intent ik = new Intent(getApplicationContext(), job.class);
-                                        startActivity(ik);
-
-                                    } else {
-
-                                        Toast.makeText(job.this, "Invalid", Toast.LENGTH_SHORT).show();
-
-                                    }
-                                } catch (JSONException e) {
-                                    Toast.makeText(job.this, "=="+e, Toast.LENGTH_SHORT).show();
-
-                                    e.printStackTrace();
-                                }
-
-
-                            }
-                        }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-
-
-                                Toast.makeText(getApplicationContext(), "Error" + error, Toast.LENGTH_LONG).show();
-                            }
-                        }) {
-                            @Override
-                            protected Map<String, String> getParams() {
-                                Map<String, String> params = new HashMap<String, String>();
-                                params.put("lid", sh.getString("lid",""));
-                                params.put("jid", jid.get(position));
-
-                                return params;
-                            }
-                        };
-                        queue.add(stringRequest);
-                        
-
-                    }
-                });
-
-        AlertDialog al=ald.create();
-        al.show();
-
+            if ("valid".equalsIgnoreCase(task)) {
+                Toast.makeText(job.this, "Request sent successfully", Toast.LENGTH_SHORT).show();
+                fetchAllJobs();
+            } else {
+                Toast.makeText(job.this, "Failed to send request: " + json.optString("message", "Unknown Error"), Toast.LENGTH_SHORT).show();
+            }
+        } catch (JSONException e) {
+            Toast.makeText(job.this, "Response parsing error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

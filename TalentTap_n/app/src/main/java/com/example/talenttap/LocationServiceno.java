@@ -201,7 +201,7 @@ public class LocationServiceno extends Service implements TextToSpeech.OnInitLis
 
 
 		RequestQueue queue3 = Volley.newRequestQueue(LocationServiceno.this);
-		String url3 = "http://" + sh.getString("ip", "") + ":5000/noti";
+		String url3 = "http://" + sh.getString("ip", "") + ":8000/noti";
 
 		// Request a string response from the provided URL.
 		StringRequest stringRequest3 = new StringRequest(Request.Method.POST, url3, new Response.Listener<String>() {

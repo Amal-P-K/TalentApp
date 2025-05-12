@@ -122,7 +122,7 @@ public class register extends AppCompatActivity {
             public void onClick(View v) {
 
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("*/*");
+                intent.setType("/");
 //            intent.setType("application/pdf");
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 startActivityForResult(intent, 7);
@@ -182,23 +182,24 @@ public class register extends AppCompatActivity {
 
                 }
 
-                else if(em.equalsIgnoreCase(""))
-                {
+                else if(em.isEmpty()) {
                     e4.setError("Enter Your Email");
                     e4.requestFocus();
-                }
-                else if(!Patterns.EMAIL_ADDRESS.matcher(em).matches())
-                {
-                    e4.setError("Enter Valid Email");
+                } else if (!Patterns.EMAIL_ADDRESS.matcher(em).matches()) {
+                    e4.setError("Enter a valid Email (e.g., example@domain.com)");
+                    e4.requestFocus();
+                } else if (!em.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+                    e4.setError("Invalid email format. Please enter a proper email address.");
                     e4.requestFocus();
                 }
+
                 else if(pl.equalsIgnoreCase(""))
                 {
                     e5.setError("Enter Your Place");
                     e5.requestFocus();
                 }
-                else if(!pl.matches("^[a-zA-Z]*$")){
-                    e5.setError("characters allowed");
+                else if (!pl.matches("^[a-zA-Z0-9 ()]+$")) {
+                    e5.setError("Only letters, numbers, spaces, and parentheses allowed");
                     e5.requestFocus();
                 }
                 else if(po.equalsIgnoreCase(""))
@@ -206,30 +207,66 @@ public class register extends AppCompatActivity {
                     e6.setError("Enter Your post");
                     e6.requestFocus();
                 }
-                else if(po.length()!=12)
+                else if(po.length() != 12)
                 {
                     e6.setError("12 numbers required");
                     e6.requestFocus();
                 }
+
 //                else if(!po.matches("^[0-9]{12}$")){
 //                    e6.setError("invalid");
 //                }
-                else if(!pi.matches("^[0-9]{2}$")){
-                    e7.setError("characters allowed");
+                else if (pi.isEmpty()) {  // Correct way to check if empty
+                    e7.setError("Enter your Date of Birth");
                     e7.requestFocus();
                 }
-                else if(pi.equalsIgnoreCase(""))
-                {
-                    e7.setError("Enter Your age");
-                    e7.requestFocus();
-                }
-                else if(Integer.parseInt(pi)>26)
-                {
-                    e7.setError("Age must be less than 26");
+                else if (!pi.matches("^\\d{2}-\\d{2}-\\d{4}$")) {
+                    e7.setError("Invalid date format. Please use DD-MM-YYYY.");
                     e7.requestFocus();
                 }
 
-                else if(usr.equalsIgnoreCase(""))
+                else {
+                    try {
+                        // Split and parse DOB
+                        String[] dobParts = pi.split("-");
+                        int day = Integer.parseInt(dobParts[0]);
+                        int month = Integer.parseInt(dobParts[1]);
+                        int year = Integer.parseInt(dobParts[2]);
+
+                        // Check if month and day are valid
+                        if (month < 1 || month > 12 || day < 1 || day > 31) {
+                            e7.setError("Invalid date entered");
+                            e7.requestFocus();
+                            return;
+                        }
+
+                        // Get the current date
+                        java.util.Calendar today = java.util.Calendar.getInstance();
+                        int currentYear = today.get(java.util.Calendar.YEAR);
+                        int currentMonth = today.get(java.util.Calendar.MONTH) + 1; // Convert zero-based month
+                        int currentDay = today.get(java.util.Calendar.DAY_OF_MONTH);
+
+                        // Calculate age
+                        int age = currentYear - year;
+                        if (currentMonth < month || (currentMonth == month && currentDay < day)) {
+                            age--; // Subtract 1 if the birthday hasn't occurred yet this year
+                        }
+
+                        // Check age limit (Must be <= 26)
+                        if (age > 26) {
+                            e7.setError("Age must be 26 or below");
+                            e7.requestFocus();
+                        }
+                    } catch (Exception e) {
+                        e7.setError("Invalid date format");
+                        e7.requestFocus();
+                    }
+                }
+
+
+
+
+                if(usr.equalsIgnoreCase(""))
                 {
                     e8.setError("Enter Your username");
                     e8.requestFocus();
@@ -246,7 +283,7 @@ public class register extends AppCompatActivity {
 
 
 
-               else
+                else
                 {
                     uploadBitmap("");
                 }
@@ -261,6 +298,7 @@ public class register extends AppCompatActivity {
         pd.setMessage("Uploading....");
         pd.show();
         String url = "http://10.0.2.2:8000/user_registration";
+
 
 
         VolleyMultipartRequest volleyMultipartRequest = new VolleyMultipartRequest(Request.Method.POST, url,
@@ -304,7 +342,7 @@ public class register extends AppCompatActivity {
 
                 params.put("address", pl);
                 params.put("aadhar", po);
-                params.put("age", pi);
+                params.put("Dob", pi);
                 params.put("gender", gen);
                 params.put("phone", ph);
                 params.put("email", em);
@@ -318,14 +356,18 @@ public class register extends AppCompatActivity {
             @Override
             protected Map<String, DataPart> getByteData() {
                 Map<String, DataPart> params = new HashMap<>();
+
+                // Check if the file is selected and valid
                 if (filedt != null && PathHolder != null && !PathHolder.isEmpty()) {
                     long imagename = System.currentTimeMillis();
                     params.put("file", new DataPart(PathHolder, filedt));
                 } else {
-                    Log.d("File Upload", "No file selected or file data is null.");
+                    Log.d("File Upload", "No photo selected. Skipping photo upload.");
                 }
+
                 return params;
             }
+
 
         };
 

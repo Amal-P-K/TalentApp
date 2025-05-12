@@ -51,7 +51,7 @@ public class VolleyMultipartRequest extends Request<NetworkResponse> {
         DataOutputStream dos = new DataOutputStream(bos);
 
         try {
-            // populate text payload
+            // populate text payload 
             Map<String, String> params = getParams();
             if (params != null && params.size() > 0) {
                 textParse(dos, params, getParamsEncoding());

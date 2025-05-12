@@ -41,7 +41,8 @@ public class recomendation extends AppCompatActivity implements AdapterView.OnIt
         sh= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
 
-        String  url ="http://"+sh.getString("ip", "") + ":5000/view_job1";
+        String url ="http://"+sh.getString("ip", "") + ":8000/view_job1/";
+
         RequestQueue queue = Volley.newRequestQueue(recomendation.this);
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,new Response.Listener<String>() {
@@ -93,9 +94,9 @@ public class recomendation extends AppCompatActivity implements AdapterView.OnIt
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
-                Toast.makeText(recomendation.this, "err"+error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(recomendation.this, "Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
             }
+
         }) {
             @Override
             protected Map<String, String> getParams() {
@@ -114,85 +115,41 @@ public class recomendation extends AppCompatActivity implements AdapterView.OnIt
         AlertDialog.Builder ald=new AlertDialog.Builder(recomendation.this);
         ald.setTitle(jb.get(position))
                 .setPositiveButton(" Cancel ", new DialogInterface.OnClickListener() {
-
                     @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        try
-                        {
-
-                            Intent ik=new Intent(getApplicationContext(),sendcomp.class);
-                            ik.putExtra("pid",pid.get(position));
-                            startActivity(ik);
-
-
-                        }
-                        catch(Exception e)
-                        {
-                            Toast.makeText(getApplicationContext(),e+"",Toast.LENGTH_LONG).show();
-                        }
-
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss(); // Close the dialog without opening any activity
                     }
                 })
-                .setNegativeButton(" Send request ", new DialogInterface.OnClickListener() {
 
+                .setNegativeButton(" Send request ", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
-
-
                         RequestQueue queue = Volley.newRequestQueue(recomendation.this);
-                        String   url = "http://" + sh.getString("ip", "") + ":5000/snd_request";
+                        String url = "http://" + sh.getString("ip", "") + ":8000/snd_request";
 
-                        // Request a string response from the provided URL.
                         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                // Display the response string.
-                                Log.d("+++++++++++++++++", response);
-                                try {
-                                    JSONObject json = new JSONObject(response);
-                                    String res = json.getString("task");
-
-                                    if (res.equalsIgnoreCase("valid")) {
-                                        Toast.makeText(recomendation.this, "Success", Toast.LENGTH_SHORT).show();
-
-                                        Intent ik = new Intent(getApplicationContext(), recomendation.class);
-                                        startActivity(ik);
-
-                                    } else {
-
-                                        Toast.makeText(recomendation.this, "Invalid", Toast.LENGTH_SHORT).show();
-
-                                    }
-                                } catch (JSONException e) {
-                                    Toast.makeText(recomendation.this, "=="+e, Toast.LENGTH_SHORT).show();
-
-                                    e.printStackTrace();
-                                }
-
-
+                                // Handle the response here
                             }
                         }, new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-
-
-                                Toast.makeText(getApplicationContext(), "Error" + error, Toast.LENGTH_LONG).show();
+                                // Handle errors here
                             }
                         }) {
                             @Override
                             protected Map<String, String> getParams() {
-                                Map<String, String> params = new HashMap<String, String>();
+                                Map<String, String> params = new HashMap<>();
                                 params.put("lid", sh.getString("lid",""));
-                                params.put("jid", jid.get(position));
-
+                                params.put("jid", jid.get(position)); // Send Job ID
                                 return params;
                             }
                         };
                         queue.add(stringRequest);
-
-
                     }
                 });
+
 
         AlertDialog al=ald.create();
         al.show();

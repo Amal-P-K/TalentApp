@@ -156,7 +156,8 @@
                 android:hint="Address"
                 android:paddingLeft="60dp"
                 android:textColor="@color/colorText"
-                android:textSize="40px" />
+                android:textSize="40px"
+                android:inputType="textCapWords" />
         </TableRow>
 
         <TableRow
@@ -176,7 +177,7 @@
                 android:textColor="@color/colorText"
                 android:textSize="40px"
                 android:hint="Aadhar number"
-                 />
+                />
         </TableRow>
 
         <TableRow
@@ -195,8 +196,11 @@
                 android:paddingLeft="60dp"
                 android:textColor="@color/colorText"
                 android:textSize="40px"
-                android:hint="Age"
-              />
+                android:hint="Enter DOB (DD-MM-YYYY)"
+                android:inputType="text"
+                />
+
+
         </TableRow>
 
         <TableRow

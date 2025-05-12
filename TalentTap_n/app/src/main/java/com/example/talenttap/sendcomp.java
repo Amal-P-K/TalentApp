@@ -47,38 +47,33 @@ String comp;
                     editTextTextPersonName2.setError("Missing");
                 }
                 else
-                {
+                {   Log.d("User ID Check", "Sending User ID: " + sh.getString("user_id", ""));
+
+
+
                     RequestQueue queue = Volley.newRequestQueue(sendcomp.this);
-                  String  url = "http://" + sh.getString("ip", "") + ":5000/snd_complaints";
+                  String  url = "http://" + sh.getString("ip", "") + ":8000/snd_complaints";
 
                     // Request a string response from the provided URL.
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            // Display the response string.
-                            Log.d("+++++++++++++++++", response);
                             try {
                                 JSONObject json = new JSONObject(response);
-                                String res = json.getString("task");
+                                String task = json.optString("task", "invalid");
+                                String message = json.optString("message", "Unknown error occurred");
 
-                                if (res.equalsIgnoreCase("valid")) {
-
-                                    Intent ik = new Intent(getApplicationContext(), complaint.class);
-                                    startActivity(ik);
-
+                                if (task.equals("valid")) {
+                                    Toast.makeText(sendcomp.this, "Complaint Sent Successfully", Toast.LENGTH_SHORT).show();
                                 } else {
-
-                                    Toast.makeText(sendcomp.this, "Invalid username or password", Toast.LENGTH_SHORT).show();
-
+                                    Toast.makeText(sendcomp.this, message, Toast.LENGTH_SHORT).show();
                                 }
                             } catch (JSONException e) {
-                                Toast.makeText(sendcomp.this, "=="+e, Toast.LENGTH_SHORT).show();
-
                                 e.printStackTrace();
+                                Toast.makeText(sendcomp.this, "Error in response", Toast.LENGTH_SHORT).show();
                             }
-
-
                         }
+
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
@@ -90,7 +85,7 @@ String comp;
                         @Override
                         protected Map<String, String> getParams() {
                             Map<String, String> params = new HashMap<String, String>();
-                            params.put("lid", sh.getString("lid",""));
+                            params.put("user_id", sh.getString("user_id", ""));
                             params.put("pid", getIntent().getStringExtra("pid"));
                             params.put("comp", comp);
 

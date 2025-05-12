@@ -39,20 +39,19 @@ public class home extends AppCompatActivity {
                     new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
-        java.net.URL thumb_u;
+
         try {
-
-            //thumb_u = new java.net.URL("http://192.168.43.57:5000/static/photo/flyer.jpg");
-
-            thumb_u = new java.net.URL("http://"+sh.getString("ip","")+":5000"+sh.getString("img",""));
-            Drawable thumb_d = Drawable.createFromStream(thumb_u.openStream(), "src");
-            topArea.setBackground(thumb_d);
-
+            java.net.URL thumb_u = null;
+            String imgPath = sh.getString("img", "");
+            if (imgPath != null && !imgPath.isEmpty()) {
+                thumb_u = new java.net.URL("http://" + sh.getString("ip", "") + ":8000" + imgPath);
+                Drawable thumb_d = Drawable.createFromStream(thumb_u.openStream(), "src");
+                topArea.setBackground(thumb_d);
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Log the error, but don’t block the login
         }
-        catch (Exception e)
-        {
 
-        }
 
         b1.setOnClickListener(new View.OnClickListener() {
             @Override

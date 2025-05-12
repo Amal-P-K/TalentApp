@@ -47,7 +47,7 @@ SharedPreferences sh;
         sh= PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
 
-      String  url ="http://"+sh.getString("ip", "") + ":5000/skill";
+      String  url ="http://"+sh.getString("ip", "") + ":8000/skill";
         RequestQueue queue = Volley.newRequestQueue(skill.this);
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,new Response.Listener<String>() {
@@ -117,7 +117,7 @@ SharedPreferences sh;
                 else {
 
                     RequestQueue queue = Volley.newRequestQueue(skill.this);
-                    String url = "http://" + sh.getString("ip", "") + ":5000/insert_skill";
+                    String url = "http://" + sh.getString("ip", "") + ":8000/insert_skill";
 
                     // Request a string response from the provided URL.
                     StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -133,6 +133,7 @@ SharedPreferences sh;
 
                                     Intent ik = new Intent(getApplicationContext(), skill.class);
                                     startActivity(ik);
+                                    finish();
 
 
                                 } else {
@@ -151,19 +152,34 @@ SharedPreferences sh;
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-
-
-                            Toast.makeText(getApplicationContext(), "Error" + error, Toast.LENGTH_LONG).show();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(), "Error" + error, Toast.LENGTH_LONG).show();
+                                }
+                            });
                         }
                     }) {
+
                         @Override
                         protected Map<String, String> getParams() {
-                            Map<String, String> params = new HashMap<String, String>();
-                            params.put("lid", sh.getString("lid", ""));
-                            params.put("skl", skil);
+                            Map<String, String> params = new HashMap<>();
+                            String userId = sh.getString("user_id", "");
 
+                            if (userId == null || userId.equals("") || userId.equals("1")) {
+                                Toast.makeText(skill.this, "Invalid User ID. Please try logging in again.", Toast.LENGTH_SHORT).show();
+                                Log.d("Skill Insert", "Invalid User ID: " + userId);
+                                return null; // Indicate failure
+                            }
+
+
+                            Log.d("Skill Insert", "User ID Sent: " + userId);
+                            params.put("user_id", userId);
+                            params.put("skl", skil);
                             return params;
                         }
+
+
                     };
                     queue.add(stringRequest);
                 }
@@ -176,7 +192,7 @@ SharedPreferences sh;
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         RequestQueue queue = Volley.newRequestQueue(skill.this);
-        String url = "http://" + sh.getString("ip", "") + ":5000/delete_skill";
+        String url = "http://" + sh.getString("ip", "") + ":8000/delete_skill";
 
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -200,7 +216,8 @@ SharedPreferences sh;
 
                     }
                 } catch (JSONException e) {
-                    Toast.makeText(skill.this, "==" + e, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(skill.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+
 
                     e.printStackTrace();
                 }
@@ -212,7 +229,8 @@ SharedPreferences sh;
             public void onErrorResponse(VolleyError error) {
 
 
-                Toast.makeText(getApplicationContext(), "Error" + error, Toast.LENGTH_LONG).show();
+                runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Error: " + error, Toast.LENGTH_LONG).show());
+
             }
         }) {
             @Override

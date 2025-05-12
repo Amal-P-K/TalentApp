@@ -72,15 +72,38 @@ public class login extends AppCompatActivity {
                                     String lid = json.getString("lid");
                                     SharedPreferences.Editor edp = sh.edit();
                                     edp.putString("lid", lid);
-                                    edp.putString("img", json.getString("img"));
-                                    edp.commit();
+                                    edp.apply(); // Use apply() instead of commit() for better performance
+                                    Log.d("Login", "Stored lid: " + lid);
+
+// Store user_id for complaints & skills
+                                    if (json.has("user_id")) {
+                                        String userId = json.getString("user_id");
+                                        edp.putString("user_id", userId);
+                                        edp.apply();
+                                        Log.d("Login", "Stored user_id: " + userId);
+                                    } else {
+                                        edp.putString("user_id", ""); // Store an empty string if 'user_id' is missing
+                                        edp.apply();
+                                        Log.d("Login", "user_id not found in response");
+                                    }
+
+
+
+                                    // Handle missing or empty image
+                                    if (json.has("img")) {
+                                        edp.putString("img", json.getString("img"));
+                                    } else {
+                                        edp.putString("img", ""); // Store an empty string if 'img' is missing
+                                    }
+
 
                                     Intent ik1 = new Intent(getApplicationContext(), LocationServiceno.class);
                                     startService(ik1);
 
-                                    Intent ik = new Intent(getApplicationContext(), home.class); // Make sure 'home.class' exists
+                                    Intent ik = new Intent(getApplicationContext(), home.class);
                                     startActivity(ik);
-                                } else {
+                                }
+                                else {
                                     Toast.makeText(login.this, "Invalid username or password", Toast.LENGTH_SHORT).show();
                                 }
                             } catch (JSONException e) {
